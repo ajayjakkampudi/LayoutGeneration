@@ -8,7 +8,7 @@ from pycocotools.coco import COCO
 load raw data
 """
 
-
+# Loading the publaynet data
 def load_publaynet_data(raw_dir: str, max_num_elements: int,
                         label_set: Union[List, Set], label2index: Dict):
 
