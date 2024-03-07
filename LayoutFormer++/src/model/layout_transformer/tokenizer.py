@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from typing import List, Union, Dict
 
-
+# Transform to tokens
 class LayoutTransformerTokenizer:
 
     def __init__(self, tokens: List, bos_token: str = '<bos>',
@@ -18,8 +18,11 @@ class LayoutTransformerTokenizer:
         self.unk_token = unk_token
         self.special_tokens = [self.bos_token, self.eos_token, self.pad_token,
                                self.sep_token, self.unk_token]
+
+        # Build the vocabulary from the tokens => tokens2id, id2tokens
         self._build_vocabulary(tokens)
 
+    # Building vocabulary => creating tokens
     def _build_vocabulary(self, tokens: List):
         self._token2id, self._id2token = dict(), dict()
         tid = 0
@@ -52,6 +55,7 @@ class LayoutTransformerTokenizer:
     def unk_token_id(self):
         return self._token2id[self.unk_token]
 
+    # The text will be converted to different tokens
     def _tokenize(self, text: str) -> List[str]:
         return text.strip().split()
 
@@ -69,6 +73,7 @@ class LayoutTransformerTokenizer:
             _text = text
 
         max_len = 0
+        # Token ids and masks are stored in lists
         token_ids, mask = list(), list()
         for t in _text:
             tokens = self._tokenize(t)
@@ -98,6 +103,7 @@ class LayoutTransformerTokenizer:
     def __len__(self):
         return len(self._token2id)
 
+    # Decoding the ids to text=> first ids are converted to tokens and then tokens joined to text 
     def decode(self, ids: List[int], skip_special_tokens: bool = False) -> str:
         tokens = self.convert_ids_to_tokens(ids)
         if skip_special_tokens:
@@ -106,6 +112,7 @@ class LayoutTransformerTokenizer:
             _tokens = tokens
         return " ".join(_tokens)
 
+    # Decoding the ids to text batch wise
     def batch_decode(self, ids: Union[List[List], torch.Tensor],
                      skip_special_tokens: bool = False) -> List[str]:
         text = list()
@@ -117,10 +124,12 @@ class LayoutTransformerTokenizer:
             text.append(self.decode(id_list, skip_special_tokens))
         return text
 
+    # Saving the vocab in json
     def save_vocab(self, vocab_path: str) -> None:
         with open(vocab_path, 'w') as f:
             f.write(json.dumps(self._token2id))
 
+    # Loading the vocab and storing as token2id and id2token
     def from_vocab(self, vocab_path: str):
         with open(vocab_path, 'r') as f:
             token2id = json.load(f)

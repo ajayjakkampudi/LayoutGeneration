@@ -7,6 +7,7 @@ from typing import Tuple, Union, List
 # processing function
 
 
+# Shuffle the data
 class ShuffleElements():
 
     def __call__(self, data):
@@ -21,7 +22,7 @@ class ShuffleElements():
         data['labels'] = data['labels'][shuffle_idx]
         return data
 
-
+# sort elements in one layout by their label
 class LabelDictSort():
     '''
     sort elements in one layout by their label
@@ -42,7 +43,7 @@ class LabelDictSort():
         data['gold_bboxes'] = data['gold_bboxes'][idx_sorted]
         return data
 
-
+# sort elements in one layout by their top and left postion
 class LexicographicSort():
     '''
     sort elements in one layout by their top and left postion
@@ -62,6 +63,7 @@ class LexicographicSort():
         return data
 
 
+# Add Gaussian Noise to bounding box
 class AddGaussianNoise():
     '''
     Add Gaussian Noise to bounding box
@@ -116,7 +118,7 @@ class AddGaussianNoise():
         return self.__class__.__name__ + '(mean={0}, std={1}, beta={2})'.format(
             self.mean, self.std, self.bernoulli_beta)
 
-
+# Convert the coordinates 
 class CoordinateTransform():
 
     def __init__(self, bbox_format):
@@ -193,14 +195,14 @@ class DiscretizeBoundingBox():
         data['discrete_gold_bboxes'] = discrete_gold_bboxes
         return data
 
-
+# Convert left, top, width, height to x, y, w, h
 def convert_ltwh_to_xywh(bbox):
     l, t, w, h = decapulate(bbox)
     xc = l + w / 2
     yc = t + h / 2
     return torch.stack([xc, yc, w, h], axis=-1)
 
-
+# Convert x, y, w, h to l, t, r, b 
 def convert_xywh_to_ltrb(bbox):
     xc, yc, w, h = decapulate(bbox)
     left = xc - w / 2

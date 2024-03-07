@@ -12,6 +12,7 @@ load raw data
 def load_publaynet_data(raw_dir: str, max_num_elements: int,
                         label_set: Union[List, Set], label2index: Dict):
 
+    # 
     def is_valid(element):
         label = coco.cats[element['category_id']]['name']
         if label not in set(label_set):
@@ -93,10 +94,11 @@ def load_publaynet_data(raw_dir: str, max_num_elements: int,
     split_dataset = [train_set, test_set, val_set]
     return split_dataset
 
-
+# Loading RICO Data
 def load_rico_data(raw_dir: str, max_num_elements: int,
                    label_set: Union[List, Set], label2index: Dict):
 
+    # Returning value True or False if the x1, y1, x2, y2 are valid measures
     def is_valid(element):
         if element['componentLabel'] not in set(label_set):
             return False
@@ -107,6 +109,7 @@ def load_rico_data(raw_dir: str, max_num_elements: int,
             return False
         return True
 
+    # Returns List of all elemets using the recursion method
     def append_child(element, elements):
         if 'children' in element.keys():
             for child in element['children']:
@@ -116,6 +119,8 @@ def load_rico_data(raw_dir: str, max_num_elements: int,
 
     dataset = []
     raw_dir = Path(raw_dir) / 'semantic_annotations'
+
+    # Reading the JSON file 
     for json_path in sorted(raw_dir.glob('*.json')):
         with json_path.open() as f:
             ann = json.load(f)
@@ -148,6 +153,7 @@ def load_rico_data(raw_dir: str, max_num_elements: int,
         bboxes = torch.tensor(bboxes, dtype=torch.float)
         labels = torch.tensor(labels, dtype=torch.long)
 
+        # The Graphic layout information stored is dictionary shown as below
         data = {
             'name': json_path.name,
             'bboxes': bboxes,

@@ -5,7 +5,7 @@ import torch
 import torchvision.utils as vutils
 import torchvision.transforms as T
 
-
+# It converts layout to image i.e. graphic using the labels, colors and boxes
 def convert_layout_to_image(boxes, labels, colors, canvas_size):
     H, W = canvas_size
     img = Image.new('RGB', (int(W), int(H)), color=(255, 255, 255))
@@ -28,7 +28,7 @@ def convert_layout_to_image(boxes, labels, colors, canvas_size):
                        fill=c_fill)
     return img
 
-
+# Saving the images batch wise acquiring through layout using convert_layout_to_image()
 def save_image(batch_boxes, batch_labels, batch_mask,
                dataset_colors, out_path, canvas_size=(60, 40),
                nrow=None):
